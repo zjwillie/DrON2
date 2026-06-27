@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DrON2.vcxproj" Id="8fdadca9-1929-4891-b54e-90358df818c2" />
+</Solution>

@@ -1,0 +1,32 @@
+# top-level comment
+
+[Scalars]
+an_int     = 42
+a_negative = -7
+a_double   = 3.14
+a_bool     = true
+a_string   = "hello world"
+identifier = LAYER_DYNAMIC
+
+[Lists]
+ints    = [1, 2, 3]
+strings = ["one", "two", "three"]
+mixed   = [1, 3.14, true, "word", SOME_ID]
+nested  = [[1, 2], [3, 4]]
+
+[Maps]
+inline  = { x = 10, y = 20 }
+nested  = { outer = { inner = "deep" } }
+mixed   = { name = "ship", speed = 3.5, active = true }
+
+[Mixed]
+map_with_list = { tags = ["a", "b"], count = 2 }
+list_of_maps  = [{ x = 1, y = 2 }, { x = 3, y = 4 }]
+
+[Multiline]
+desc = """
+line one
+line two
+"""
+
+[Empty]
