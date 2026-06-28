@@ -156,6 +156,7 @@
     <ClInclude Include="DronValue.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="serialized_test.dron" />
     <None Include="test.dron" />
     <None Include="torture_test.dron" />

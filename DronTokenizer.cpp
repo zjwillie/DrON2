@@ -71,22 +71,22 @@ void DronTokenizer::handleMultiline(const std::string& trimmed) {
         if (!current_multiline_content_.empty()) current_multiline_content_ += '\n';
         current_multiline_content_ += trimmed;
     }
-};
+}
 
 void DronTokenizer::handleSectionHeader(const std::string& trimmed) {
     /// we should have something like [Section Name]
     // verify it ends in ], or else we have and unknown but treat as find
     if (trimmed[trimmed.size() - 1] == ']') {
         // we have a section head that is valid
-        emitToken(TokenType::SECTION_HEADER, std::move(trimmed.substr(1,trimmed.size()-2)), line_number_);
+        emitToken(TokenType::SECTION_HEADER, trimmed.substr(1,trimmed.size()-2), line_number_);
     }
     else {
         // we have a section that is not valid but started with a [ but doesn't end in one,
         //! let's emit it back but log an error, and not remove the last char
         std::cout << "Incorrect format for section header, tough likely you forgot it: " << line_number_ << ": " << trimmed << "\n";
-        emitToken(TokenType::SECTION_HEADER, std::move(trimmed.substr(1, trimmed.size() - 1)), line_number_);
+        emitToken(TokenType::SECTION_HEADER, trimmed.substr(1, trimmed.size() - 1), line_number_);
     }
-};
+}
 
 void DronTokenizer::handleKeyValue(const std::string& trimmed) {
     // cool so we know that it didn't fit any of the other criteria so let's make sure it fits this one
@@ -133,6 +133,7 @@ void DronTokenizer::tokenizeValue(const std::string& value) {
         // string time
         if (value[position] == '"') {
             if (value.substr(position, 3) == "\"\"\"") {
+                current_multiline_content_.clear();
                 in_multiline_ = true;
                 return;
             }
@@ -150,7 +151,7 @@ void DronTokenizer::tokenizeValue(const std::string& value) {
             }
             else {
                 // all good here, our value was a string, emit it
-                emitToken(TokenType::STRING, std::move(value_string.substr(0, value_string.size())), line_number_);
+                emitToken(TokenType::STRING, std::move(value_string), line_number_);
             }
             continue;
         }
