@@ -158,6 +158,7 @@
   <ItemGroup>
     <None Include="serialized_test.dron" />
     <None Include="test.dron" />
+    <None Include="torture_test.dron" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

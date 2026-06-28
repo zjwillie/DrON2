@@ -1,5 +1,7 @@
 #include "DronParser.hpp"
 
+#include <utility>
+
 const Token& DronParser::peek() const {
 	if (position_ >= tokens_->size()) return tokens_->back();
 	return (*tokens_)[position_];
@@ -46,7 +48,15 @@ DronNode DronParser::parseList() {
 			continue;
 		}
 		else {
-			dronList.push_back(parseValue());
+			size_t before = position_;
+			DronNode value = parseValue();
+			if (position_ == before) {
+				// parseValue refused a stray non-value token (e.g. a '}' inside
+				// a '['); skip it so the loop can't spin forever.
+				advance();
+				continue;
+			}
+			dronList.push_back(std::move(value));
 		}
 	}
 	//consume the ]
@@ -68,7 +78,13 @@ DronNode DronParser::parseValue() {
 	}
 	case TokenType::DOUBLE:	{
 		Token token = advance();
-		return DronNode{ std::stod(token.value) };
+		try {
+			return DronNode{ std::stod(token.value) };
+		}
+		catch (const std::exception&) {
+			// not a representable double - keep the raw text so it's visible
+			return DronNode{ token.value };
+		}
 	}
 	case TokenType::BOOLEAN: {
 		Token token = advance();
@@ -95,6 +111,16 @@ DronNode DronParser::parseValue() {
 	case TokenType::LEFT_BRACKET: {
 		return parseList();
 	}
+	case TokenType::RIGHT_BRACE:
+	case TokenType::RIGHT_BRACKET:
+	case TokenType::SECTION_HEADER:
+	case TokenType::KEY:
+	case TokenType::END_OF_FILE: {
+		// No value present (e.g. "key =" or "{ x }"). Do NOT consume the token,
+		// so the enclosing container/section loop sees its own terminator and
+		// the next key/section isn't swallowed.
+		return DronNode{ std::string{} };
+	}
 	default: {
 		Token token = advance();
 		return DronNode{ token.value };
@@ -103,8 +129,7 @@ DronNode DronParser::parseValue() {
 }
 
 void DronParser::parseKeyValue(const std::string& key, DronMap& map) {
-	// consume the equals
-	advance();
+	if (peek().type == TokenType::EQUALS) advance();  // consume = only if present
 	map[key] = parseValue();
 }
 

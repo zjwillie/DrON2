@@ -44,7 +44,7 @@ DronValue DronValue::operator[](std::size_t integer) const {
 }
 
 DronMapView DronValue::items() const {
-	if (!valid() || !isMap()) return DronMapView{ nullptr };
+	if (!valid() || !isMap()) return DronMapView{ nullptr, path_ };
 	return DronMapView{ &node_->as<DronMap>(), path_ };
 }
 

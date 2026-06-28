@@ -9,10 +9,11 @@
 
 int main()
 {
-	DronReader reader("serialized_test.dron");
-	//reader.print();
+	DronReader reader("torture_test.dron");
+	reader.print();
 
-	for (auto [key, value] : reader["Maps"]["inline_map"].items()) {
-		std::cout << key << " = " << value.as<int64_t>(0) << "\n";
-	}
+	int64_t integer = reader["Sprite"]["width"].as<int64_t>(0);
+	std::cout << integer;
+
+	DronTests::runAll();
 }

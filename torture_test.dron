@@ -1,0 +1,184 @@
+# =============================================================================
+# DrON 1.0 torture fixture
+#
+# Every value here exists so a test can assert an EXACT expected result.
+# Sections are grouped by what they stress. Where a value is intentionally
+# malformed, the comment says what the reader SHOULD return for it.
+# =============================================================================
+
+# --- scalars at their type edges -------------------------------------------
+[Scalars]
+plain_int      = 42
+neg_int        = -7
+zero_int       = 0
+int64_max      = 9223372036854775807      # std::stoll handles this exactly
+int64_min      = -9223372036854775808     # exact int64 minimum
+plain_double   = 3.14
+neg_double     = -0.5
+zero_double    = 0.0
+neg_zero       = -0.0
+leading_dot    = .5                        # tokenizer normalizes to 0.5
+neg_leading    = -.25                      # normalizes to -0.25
+big_double     = 123456.789
+true_val       = true
+false_val      = false
+ident          = LAYER_DYNAMIC             # bare identifier -> string
+quoted         = "hello world"
+empty_string   = ""
+single_char    = "x"
+
+# --- numbers that must NOT crash (the stoll/stod catch) --------------------
+[BadNumbers]
+too_big_int    = 99999999999999999999      # overflows int64 -> stored as string "99999999999999999999"
+too_big_neg    = -99999999999999999999     # overflow -> string
+double_dash    = --5                       # malformed -> string "--5"
+lone_minus     = -                         # tokenizer flags invalid -> string "-"
+lone_dot       = .                          # invalid -> string "."
+
+# --- strings containing structural characters ------------------------------
+[TrickyStrings]
+has_hash       = "color #FF0000"
+has_equals     = "a = b = c"
+has_brackets   = "looks like [1, 2, 3]"
+has_braces     = "looks like {x = 1}"
+has_commas     = "one, two, three"
+has_quotes_adj = ""
+padded         = "   spaced out   "
+
+# --- lists, including the empty and single cases ---------------------------
+[Lists]
+empty_list     = [
+    ]
+single         = [
+    99
+]
+ints           = [
+    10,
+    20,
+    30
+]
+doubles        = [
+    1.5,
+    2.5,
+    3.5
+]
+strings        = [
+    "alpha",
+    "beta",
+    "gamma"
+]
+mixed          = [
+    1,
+    2.5,
+    "three",
+    true,
+    IDENT
+]
+nested_list    = [
+    [
+        1,
+        2
+    ],
+    [
+        3,
+        4
+    ]
+]
+
+# --- maps, including empty and nested --------------------------------------
+[Maps]
+empty_map      = {
+    }
+flat           = {
+    a = 1,
+    b = 2,
+    c = 3
+}
+typed          = {
+    name = "ship",
+    speed = 4.5,
+    alive = true,
+    tag = FAST
+}
+nested_map     = {
+    outer = {
+        inner = {
+            deep = "bottom"
+        }
+    }
+}
+
+# --- deliberately deep, to stress the recursion ----------------------------
+[DeepNest]
+five_levels = {
+    l1 = {
+        l2 = {
+            l3 = {
+                l4 = {
+                    l5 = "reached"
+                }
+            }
+        }
+    }
+}
+list_of_maps = [
+    {
+        id = 1,
+        label = "first"
+    },
+    {
+        id = 2,
+        label = "second"
+    }
+]
+map_holding_list = {
+    items = [
+        100,
+        200,
+        300
+    ],
+    count = 3
+}
+
+# --- realistic component-style section (mirrors engine usage) --------------
+[Transform]
+x = 160.0
+y = 90.0
+rotation = 0.0
+
+[Sprite]
+width = 24
+height = 24
+red = 255
+green = 100
+blue = 100
+
+[Tags]
+list = [
+    "asteroid",
+    "obstacle",
+    "large"
+]
+
+# --- empty section, and a section right after it ---------------------------
+[EmptySection]
+
+[AfterEmpty]
+proof = "loaded"
+
+# --- inline comments after values (tokenizer strips them) ------------------
+[InlineComments]
+speed = 7.5      # trailing comment
+name  = "Bob"    # another one
+flag  = true     # and one more
+count = 42       # last
+
+[Multiline]
+normal = """
+line one
+line two
+line three
+"""
+single = """
+just one
+"""
